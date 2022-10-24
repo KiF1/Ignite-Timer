@@ -9,7 +9,7 @@
 - Esse é um projeto desenvolvido em conjunto com o curso da Rocketseat, onde visa colocar em prática os conhecimentos em React juntamente com Typescript.
 - O projeto é desenvolvido com styled-components onde visa em tornar mais simples a estilização dos components pela mudança de estado.
 - Utiliza a biblioteca Zod para validação de formulários.
-- Usa a context API para compatilhar os estados entre components, como por exemplo passar os estados dos ciclos para a página History listar os ciclos com seus estados atual.
+- Usa a context API para compatilhar os estados entre components, como por exemplo passar os estados dos ciclos para a página History listar os ciclos com seus estados atuais.
 - Usa o Redux para manusear os estados compartilhados de forma mais prática e simples.
 - Utiliza a Reack-hook-forms para gerenciar os estados de dados no formulário
 
