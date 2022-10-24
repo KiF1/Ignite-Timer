@@ -1,13 +1,9 @@
-import { createContext, ReactNode, useState } from 'react'
+import { differenceInSeconds } from 'date-fns'
+import { createContext, ReactNode, useEffect, useReducer, useState } from 'react'
+import { ActionTypes, addNewCycleAction, interruptedCurrentCycleAction, markCurrentCycleFinishedAction} from '../reducers/cycles/actions'
+import {  Cycle, cyclesReducer } from '../reducers/cycles/reducer'
 
-interface Cycle {
-  id: string
-  task: string
-  minutesAmount: number
-  startData: Date
-  interruptDate?: Date
-  finishedDate?: Date
-}
+
 
 interface CreateCycleData {
   task: string
@@ -29,30 +25,54 @@ interface CyclesContextProviderProps {
   children: ReactNode
 }
 
+
+
 export const CyclesContext = createContext({} as CyclesContextType)
 
 export function CyclesContextProvider({
   children,
 }: CyclesContextProviderProps) {
-  const [cycles, setCycles] = useState<Cycle[]>([])
-  const [activeCycleId, setActiveCycleId] = useState<string | null>(null)
-  const [amountSecondsPassed, setAmountSecondsPassed] = useState(0)
+
+  //Usamos o educer quando precisamos de um estado que mantem muitos dados e é alterado de muitas fontes diferentes
+  const [cyclesState, dispatch] = useReducer(cyclesReducer , 
+    /*Agora receb o valor inical*/ {
+    cycles: [],
+    activeCycleId: null,
+}, () => {
+  const storedStateAsJson = localStorage.getItem('@ignite-Timer:cycles-state-1.0.0');
+  if(storedStateAsJson){
+    return JSON.parse(storedStateAsJson)
+  }
+  return {cycles: [], activeCycleId: null};
+})
+
+   useEffect(() => {
+    const stateJson = JSON.stringify(cyclesState)
+
+    localStorage.setItem('@ignite-Timer:cycles-state-1.0.0', stateJson)
+  }, [cyclesState])
+
+  const {cycles, activeCycleId} = cyclesState
+
   const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
+
+  const [amountSecondsPassed, setAmountSecondsPassed] = useState(()=>{
+    if(activeCycle){
+      return differenceInSeconds( new Date(), new Date(activeCycle.startData),
+      )
+    }
+
+    return 0
+  })
+  
+  
 
   function setSecondsPassed(seconds: number) {
     setAmountSecondsPassed(seconds)
   }
 
   function markCurrentCycleAsFinish() {
-    setCycles((state) =>
-      state.map((cycle) => {
-        if (cycle.id === activeCycleId) {
-          return { ...cycle, finishedDate: new Date() }
-        } else {
-          return cycle
-        }
-      }),
-    )
+    dispatch(markCurrentCycleFinishedAction())
   }
 
   // data são os dados vindo do input do formulário
@@ -65,24 +85,16 @@ export function CyclesContextProvider({
       startData: new Date(),
     }
     // Sempre quando for alterar um estado e esse estado depende de seu valor anterior, é interessante setar esse valor como Função
-    setCycles((state) => [...state, newCycle])
-    setActiveCycleId(id)
+    // setCycles((state) => [...state, newCycle])
+    dispatch(addNewCycleAction(newCycle))
+
     setAmountSecondsPassed(0)
     // O reset é uma função que reseta os valores para o seu valor inicial. obs: o Valor inicial é o passado em (defaultValues) no metodo useForm
     // reset()
   }
 
   function interruptCurrentCycle() {
-    setCycles((state) =>
-      state.map((cycle) => {
-        if (cycle.id === activeCycleId) {
-          return { ...cycle, interruptDate: new Date() }
-        } else {
-          return cycle
-        }
-      }),
-    )
-    setActiveCycleId(null)
+    dispatch(interruptedCurrentCycleAction())
   }
 
   return (

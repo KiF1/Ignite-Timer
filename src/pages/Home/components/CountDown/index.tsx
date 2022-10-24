@@ -22,19 +22,20 @@ export function CountDown() {
   const totalSeconds = activeCycle ? activeCycle.minutesAmount * 60 : 0
 
   useEffect(() => {
-    let interval: number
+    let interval: number;
+    
     if (activeCycle) {
-      interval = setInterval(() => {
-        const secondsDifference = differenceInSeconds(
+      interval = window.setInterval(() => {
+        const secondsDiference = differenceInSeconds(
           new Date(),
-          activeCycle.startData,
+          new Date(activeCycle.startData),
         )
-        if (secondsDifference >= totalSeconds) {
+        if (secondsDiference >= totalSeconds) {
           markCurrentCycleAsFinish()
           setSecondsPassed(totalSeconds)
           clearInterval(interval)
         } else {
-          setSecondsPassed(secondsDifference)
+          setSecondsPassed(secondsDiference)
         }
       }, 1000)
     }
