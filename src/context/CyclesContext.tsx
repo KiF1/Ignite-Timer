@@ -17,7 +17,7 @@ interface CreateCycleData {
 interface CyclesContextType {
   cycles: Cycle[]
   activeCycle: Cycle | undefined
-  activeCycleId: Cycle | null
+  activeCycleId: string | null
   amountSecondsPassed: number
   markCurrentCycleAsFinish: () => void
   setSecondsPassed: (seconds: number) => void
@@ -35,7 +35,7 @@ export function CyclesContextProvider({
   children,
 }: CyclesContextProviderProps) {
   const [cycles, setCycles] = useState<Cycle[]>([])
-  const [activeCycleId, setActiveCycleId] = useState(null)
+  const [activeCycleId, setActiveCycleId] = useState<string | null>(null)
   const [amountSecondsPassed, setAmountSecondsPassed] = useState(0)
   const activeCycle = cycles.find((cycle) => cycle.id === activeCycleId)
 
@@ -76,7 +76,7 @@ export function CyclesContextProvider({
     setCycles((state) =>
       state.map((cycle) => {
         if (cycle.id === activeCycleId) {
-          return { ...cycle, finishedDate: new Date() }
+          return { ...cycle, interruptDate: new Date() }
         } else {
           return cycle
         }
