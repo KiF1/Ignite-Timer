@@ -14,6 +14,10 @@
 - Utiliza a Reack-hook-forms para gerenciar os estados de dados no formulário
 
 
+## Apresentação do Pojeto:
+<img src="./timer.gif">
+
+
 ## Gostou do meu projeto? :D Entre em contato comigo! 
 - [Linkedin](https://www.linkedin.com/in/abner-santos-b195b8228/) <br/>
 - [Email: abner.kif1@gmail.com](mailto:abner.kif1@gmail.com)
